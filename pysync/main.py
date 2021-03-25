@@ -20,7 +20,7 @@ cli = typer.Typer()
 # Config
 config_file = Path.home() / '.pysync'
 if config_file.exists():
-    exec(open('file.py').read())
+    exec(open(config_file).read())
     repos = [Repo(i) for i in repo_directories]
     repos = [r for r in repos if r.valid]
     bare_repos = [BareRepo(**i) for i in bare_repos]
