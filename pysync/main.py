@@ -9,22 +9,28 @@ import typer
 # import pysync.github
 # from pysync.github import repositories
 # GitHub Repositories
-from pysync.config import repo_directories, bare_repos
+# from pysync.config import repo_directories, bare_repos
 from pysync.github import Repo, BareRepo
 from pysync.handlers import repo_output_handler
     
 
 cli = typer.Typer()
 
-repos = [Repo(i) for i in repo_directories]
-repos = [r for r in repos if r.valid]
-bare_repos = [BareRepo(**i) for i in bare_repos]
-bare_repos = [i for i in bare_repos if i.valid]
 
+# Config
+config_file = Path.home() / '.pysync'
+if config_file.exists():
+    exec(open('file.py').read())
+    repos = [Repo(i) for i in repo_directories]
+    repos = [r for r in repos if r.valid]
+    bare_repos = [BareRepo(**i) for i in bare_repos]
+    bare_repos = [i for i in bare_repos if i.valid]
+else:
+    repos = []
+    bare_repos = []
 repos = repos + bare_repos
 
 
-#sync_repos_file = Path(__file__).parent / 'scripts' / 'sync-repos.py'
 if sys.platform == 'win32':
 
     py_version = sys.version_info

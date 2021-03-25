@@ -7,6 +7,7 @@ name = "pypi"
 typer = "*"
 sync = {editable = true, path = "."}
 blessed = "*"
+pysync = {editable = true, path = "."}
 
 [dev-packages]
 jupyterlab = "*"
