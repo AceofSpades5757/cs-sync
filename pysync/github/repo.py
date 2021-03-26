@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.10.1
+#       jupytext_version: 1.11.0
 #   kernelspec:
 #     display_name: Python 3
 #     language: python
@@ -18,6 +18,22 @@ import subprocess
 from pathlib import Path
 from types import SimpleNamespace
 
+
+# repo.status -> Status object
+# Status.        
+#
+#
+#
+#
+# self.branch = branch
+#         self.ahead = branch.ahead
+#         self.behind = branch.behind
+#         self.modified = modified
+#         self.renamed = renamed
+#         self.deleted = deleted
+#         self.untracked = untracked
+#         self.ignored = ignored
+#         self.all_changed_files = all_files
 
 class Repo:
 
