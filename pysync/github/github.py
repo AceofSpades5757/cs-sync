@@ -21,18 +21,18 @@
 #
 # - Add parsing for pull commands (GitRepo.parse_status may work for this)
 
+from shutil import which
+import subprocess
+import re
+from pathlib import Path
 import sys
 from types import SimpleNamespace
+
 if sys.platform == 'win32':
     startup_info = subprocess.STARTUPINFO()
     startup_info.dwFlags |= subprocess.STARTF_USESHOWWINDOW
 else:
     startup_info = None
-
-from shutil import which
-import subprocess
-import re
-from pathlib import Path
 
 readme=""" Describe a package
 
@@ -910,9 +910,3 @@ if __name__ == '__main__':
     # print(' '.join(command))
     subprocess.run(command, stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE)
-
-# # Notes
-#
-# Still very broken. REALLY doesn't like not having a valid repo, but that shouldn't matter if I'm trying to init one.
-#
-# What this should _really_ have is more validation and better error outputs, like "Not a valid GitHub repository. Please initialize first."

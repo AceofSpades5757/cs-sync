@@ -44,23 +44,24 @@ def all():
     """ Git, AWS, System Settings (Windows Terminal), etc. """
     git()
 
+
+def update_and_status_output(repo):
+    """ Allow these 2 functions to be run one after the other concurrently. """
+    if repo.remote_status:
+        repo.update()
+    return repo_output_handler(repo)
 @cli.command()
 def git():
     """ Status, Pull, etc. all git repos. """
-    # Update First
+
+    # Update and Status Output
     with concurrent.futures.ProcessPoolExecutor() as executor:
-        results = [executor.submit(repo.update) for repo in [r for r in repos if r.remote_status]]
-        for future in concurrent.futures.as_completed(results):
-            if future.result():
-                pass
-    # Status Output
-    with concurrent.futures.ProcessPoolExecutor() as executor:
-        results = [executor.submit(repo_output_handler, repo) for repo in repos]
+        results = [executor.submit(update_and_status_output, repo) for repo in repos]
         for future in concurrent.futures.as_completed(results):
             if future.result():
                 print(future.result())
 
-                
+
 @cli.command()
 def goodbye(name: str):
     """ Test. """
