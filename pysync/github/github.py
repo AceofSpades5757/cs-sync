@@ -144,7 +144,7 @@ class CLI(Package):
                     '--version'
                 ],
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                startupinfo=startupinfo,
+                startupinfo=startup_info,
             )
             output = p.stdout.decode()
             re_version = re.compile(r'[0-9.]+')
@@ -254,7 +254,7 @@ class PackageManager(Package):
                     '--version'
                 ],
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                startupinfo=startupinfo,
+                startupinfo=startup_info,
             )
             output = p.stdout.decode()
             re_version = re.compile(r'[0-9.]+')
