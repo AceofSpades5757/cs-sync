@@ -36,8 +36,11 @@ def repo_output_handler(repo, tabs=1):
         repo_condition = 'red'
     for i in repo.ignored:
         results.append(term.red(f'{tabs*indent}ignored: {i.path}'))
-        repo_condition = 'red'
-
+        
+        
+    if not repo.remote_status:
+        repo_condition = 'blue'
+    
     try:
         header = f"{(tabs-1)*indent} {repo.name} {repo.ahead:+} {repo.behind:+} {len(repo.modified):+}"
     except:  # For Bare Repos
@@ -48,8 +51,9 @@ def repo_output_handler(repo, tabs=1):
         results.insert(0, term.yellow(f"⚠ {header}"))
     elif repo_condition == 'red':
         results.insert(0, term.red(f"! {header}"))
-
+    elif repo_condition == 'blue':
+        results.insert(0, term.blue(f"? {header}"))
+    
     return '\n'.join(results)
-
 
 term = Terminal()

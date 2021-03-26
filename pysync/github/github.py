@@ -21,6 +21,19 @@
 #
 # - Add parsing for pull commands (GitRepo.parse_status may work for this)
 
+import sys
+from types import SimpleNamespace
+if sys.platform == 'win32':
+    startup_info = subprocess.STARTUPINFO()
+    startup_info.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+else:
+    startup_info = None
+
+from shutil import which
+import subprocess
+import re
+from pathlib import Path
+
 readme=""" Describe a package
 
 Features
@@ -81,11 +94,6 @@ Test Example
 Installing ctags for Ubuntu...
 """
 
-from shutil import which
-import subprocess
-import re
-from pathlib import Path
-
 
 class Package:
 
@@ -131,8 +139,6 @@ class CLI(Package):
             self.command = command
 
         if not version:
-            startupinfo = subprocess.STARTUPINFO()
-            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
             p = subprocess.run([
                     self.command,
                     '--version'
@@ -243,8 +249,6 @@ class PackageManager(Package):
         self.elevation = elevation
 
         if not version:
-            startupinfo = subprocess.STARTUPINFO()
-            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
             p = subprocess.run([
                     self.command,
                     '--version'
@@ -418,17 +422,14 @@ class GitManager(PackageManager):
             if stderr:
                 print(stderr)
     
-    def update(self, uri, path=None, dry_run=False):
+    def update(self, path=None, dry_run=False, *args, **kwargs):
         
-        if not path:
-            path = str(Path())
-        
-        command = [
-            self.command,
-            self.install_command,
-            uri,
-            path,
-        ]
+        command = [self.command]
+        command += ['-C', path] if path else []
+        command += args if args else []
+        for i, j in kwargs.items():
+            command += [i, j]
+        command += [self.update_command]
         
         if dry_run:
             return command
@@ -457,7 +458,7 @@ class GitManager(PackageManager):
 
 git = GitManager(
     'git',
-    command=None,
+    command='git',
     install_command='clone',
     uninstall_command=None,
     update_command='pull',
@@ -465,15 +466,6 @@ git = GitManager(
 
 if __name__ == '__main__':
     git.install('hey', dry_run=True)
-
-# +
-import sys
-from types import SimpleNamespace
-if sys.platform == 'win32':
-    startup_info = subprocess.STARTUPINFO()
-    startup_info.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-else:
-    startup_info = None
 
 
 class Repo(Package):
@@ -490,16 +482,17 @@ class Repo(Package):
                  ):
         
         self.dependencies = dependencies + ('git',)
-        self.path = Path(path)
+        self.path = path
         self.version = version
         if not name:
-            self.name = self.path.stem
+            self.name = Path(self.path).stem
         else:
             self.name = name
         
         self.valid = True
         self.uri = self.get_uri()
         self.get_status()
+        self.remote_status = self.check_remote()
 
     def __repr__(self):
 
@@ -519,9 +512,10 @@ class Repo(Package):
 
     def update(self):
         
-        self.package_manager.update()
+        self.package_manager.update(path=self.path)
         
     def pull(self):
+        
         self.update()
     
     @property
@@ -546,6 +540,22 @@ class Repo(Package):
         uri = stdout.strip()
         
         return uri
+    
+    def check_remote(self):
+        
+        command = [self.package_manager.command, '-C', self.path, 'ls-remote']
+        process = subprocess.run(
+            command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        stdout = process.stdout.decode()
+        stderr = process.stderr.decode()
+        
+        if 'fatal: Could not read from remote repository.' in stderr:
+            return False
+        else:
+            return True
     
     def get_status(self, dry_run=False):
 
@@ -673,19 +683,18 @@ class Repo(Package):
         return file
 
 
-# -
-
 class BareRepo(Repo):
 
     def __init__(self, git_dir, work_tree, name=None, *args, **kwargs):
 
-        self.work_tree = Path(work_tree)
-        self.git_dir = Path(git_dir)
+        self.work_tree = work_tree
+        self.git_dir = git_dir
         if name:
             self.name = name
         else:
-            self.name = self.git_dir.stem
+            self.name = Path(self.git_dir).stem
         self.valid = True
+        self.remote_status = self.check_remote()
         self.get_status()
 
     def install(self, uri=None):
@@ -705,6 +714,26 @@ class BareRepo(Repo):
         uri = stdout.strip()
         
         return uri
+    
+    def update(self, **kwargs):
+        
+        self.package_manager.update(f'--git-dir={self.git_dir}', f'--work-tree={self.work_tree}')
+        
+    def check_remote(self):
+        
+        command = [self.package_manager.command, f'--git-dir={self.git_dir}', f'--work-tree={self.work_tree}', 'ls-remote']
+        process = subprocess.run(
+            command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        stdout = process.stdout.decode()
+        stderr = process.stderr.decode()
+        
+        if 'fatal: Could not read from remote repository.' in stderr:
+            return False
+        else:
+            return True
     
     def get_status(self):
 

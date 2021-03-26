@@ -6,10 +6,6 @@ import concurrent.futures
 
 import typer
 
-# import pysync.github
-# from pysync.github import repositories
-# GitHub Repositories
-# from pysync.config import repo_directories, bare_repos
 from pysync.github import Repo, BareRepo
 from pysync.handlers import repo_output_handler
     
@@ -51,6 +47,13 @@ def all():
 @cli.command()
 def git():
     """ Status, Pull, etc. all git repos. """
+    # Update First
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        results = [executor.submit(repo.update) for repo in [r for r in repos if r.remote_status]]
+        for future in concurrent.futures.as_completed(results):
+            if future.result():
+                pass
+    # Status Output
     with concurrent.futures.ProcessPoolExecutor() as executor:
         results = [executor.submit(repo_output_handler, repo) for repo in repos]
         for future in concurrent.futures.as_completed(results):
