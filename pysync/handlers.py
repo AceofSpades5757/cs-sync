@@ -20,7 +20,7 @@ term = Terminal()
 
 
 def repo_output_handler(repo, tabs=1):
-    
+
     results = []
     indent = '\t'
     repo_condition = 'green'
@@ -28,7 +28,9 @@ def repo_output_handler(repo, tabs=1):
         results.append(term.yellow(f'{tabs*indent}modified: {i.path}'))
         repo_condition = 'yellow'
     for i in repo.renamed:
-        results.append(term.yellow(f'{tabs*indent}renamed: {i.path} {i.original_path}'))
+        results.append(
+            term.yellow(f'{tabs*indent}renamed: {i.path} {i.original_path}')
+        )
         repo_condition = 'yellow'
     for i in repo.untracked:
         results.append(term.yellow(f'{tabs*indent}untracked: {i.path}'))
@@ -38,14 +40,13 @@ def repo_output_handler(repo, tabs=1):
         repo_condition = 'red'
     for i in repo.ignored:
         results.append(term.red(f'{tabs*indent}ignored: {i.path}'))
-        
-        
+
     if not repo.online:
         repo_condition = 'blue'
-    
+
     try:
         header = f"{(tabs-1)*indent} {repo.name}{' ' + repo.branch.head if repo.branch.head else ''} {repo.ahead:+} {repo.behind:+} ~{len(repo.modified)} -{len(repo.deleted)}"
-        header = [(tabs-1)*indent, repo.name]
+        header = [(tabs - 1) * indent, repo.name]
         if repo.branch.head:
             header.append(term.magenta(repo.branch.head))
         if repo.ahead:
@@ -61,7 +62,7 @@ def repo_output_handler(repo, tabs=1):
         header = ' '.join(header)
     except:  # For Bare Repos
         header = f"{(tabs-1)*indent} {repo.name} {len(repo.modified):+}"
-    
+
     if repo_condition == 'green':
         results.insert(0, term.green(f"✓ {header}"))
     elif repo_condition == 'yellow':
@@ -70,5 +71,5 @@ def repo_output_handler(repo, tabs=1):
         results.insert(0, term.red(f"! {header}"))
     elif repo_condition == 'blue':
         results.insert(0, term.blue(f"? {header}"))
-    
+
     return '\n'.join(results)
