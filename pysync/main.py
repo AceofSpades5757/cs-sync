@@ -27,14 +27,18 @@ def expand_path(path):
     path = glob(str(Path(path).expanduser()))
     return path
 
+
 def flatten_list(nested_list):
     return functools.reduce(operator.iconcat, nested_list, [])
+
 
 def load_config():
     if config_file.exists():
         with open(config_file, "r") as ymlfile:
             config = yaml.load(ymlfile, Loader=yaml.Loader)
-        repo_paths = flatten_list([expand_path(i) for i in config.get('repo_paths', [])])
+        repo_paths = flatten_list(
+            [expand_path(i) for i in config.get('repo_paths', [])]
+        )
         bare_repo_dicts = config.get('bare_repos', [])
         for i in bare_repo_dicts:
             i['git_dir'] = expand_path(i['git_dir'])[0]
@@ -53,12 +57,16 @@ def all():
 
 @cli.command()
 def git():
-    
+
     """ Status, Pull, etc. all git repos. """
-    
+
     repo_paths, bare_repo_dicts = load_config()
-    repo_paths = [i for i in repo_paths if Path(i).is_dir() and '.git' in [j.name for j in Path(i).glob('*')]]
-    
+    repo_paths = [
+        i
+        for i in repo_paths
+        if Path(i).is_dir() and '.git' in [j.name for j in Path(i).glob('*')]
+    ]
+
     # 3.58 seconds
     # Parsing: 4.04 seconds, 4.26 seconds, 3.89 seconds
     # Extend Parsing: 4.5 seconds
@@ -67,15 +75,16 @@ def git():
     chains = [chain(r) for r in repos]
     tasks = group(chains)
     output = asyncio.run(tasks)
-    
+
     for o in output:
         status_stdout = o['status']['stdout']
         parsed = parse_git_status(status_stdout)
         parsed.name = o['name']
         print(repo_output_handler(parsed))
-                
+
     elapsed = time.perf_counter() - start
     print(term.red(f"{len(repos)} executed in {elapsed:0.2f} seconds."))
+
 
 if __name__ == '__main__':
     cli()
