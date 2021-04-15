@@ -1,42 +1,48 @@
-import sys
 import subprocess
 from pathlib import Path
-import platform
-import concurrent.futures
+import yaml
+from glob import glob
+import functools
+import operator
+import asyncio
+import time
 
 import typer
+from blessed import Terminal
 
-from pysync.github import Repo, BareRepo
+from pysync.github import async_git_pull, chain, group, parse_git_status
 from pysync.handlers import repo_output_handler
-    
 
+
+term = Terminal()
 cli = typer.Typer()
+start = time.perf_counter()
 
 
 # Config
 config_file = Path.home() / '.pysync'
-if config_file.exists():
-    exec(open(config_file).read())
-    repos = [Repo(i) for i in repo_directories]
-    repos = [r for r in repos if r.valid]
-    bare_repos = [BareRepo(**i) for i in bare_repos]
-    bare_repos = [i for i in bare_repos if i.valid]
-else:
-    repos = []
-    bare_repos = []
-repos = repos + bare_repos
 
 
-if sys.platform == 'win32':
+def expand_path(path):
+    path = glob(str(Path(path).expanduser()))
+    return path
 
-    py_version = sys.version_info
-    py_version = f'{py_version.major}.{py_version.minor}'
-    py_architecture = platform.architecture()[0][:2]
+def flatten_list(nested_list):
+    return functools.reduce(operator.iconcat, nested_list, [])
 
-    python = f'py -{py_version}-{py_architecture}'.split()
-
-elif sys.platform == 'linux':
-    python = ['python3']
+def load_config():
+    if config_file.exists():
+        with open(config_file, "r") as ymlfile:
+            config = yaml.load(ymlfile, Loader=yaml.Loader)
+        repo_paths = flatten_list([expand_path(i) for i in config.get('repo_paths', [])])
+        bare_repo_dicts = config.get('bare_repos', [])
+        for i in bare_repo_dicts:
+            i['git_dir'] = expand_path(i['git_dir'])[0]
+            i['work_tree'] = expand_path(i['work_tree'])[0]
+    else:
+        repo_paths = []
+        bare_repo_dicts = []
+    return repo_paths, bare_repo_dicts
 
 
 @cli.command()
@@ -45,28 +51,31 @@ def all():
     git()
 
 
-def update_and_status_output(repo):
-    """ Allow these 2 functions to be run one after the other concurrently. """
-    if repo.remote_status:
-        repo.update()
-    return repo_output_handler(repo)
 @cli.command()
 def git():
+    
     """ Status, Pull, etc. all git repos. """
-
-    # Update and Status Output
-    with concurrent.futures.ProcessPoolExecutor() as executor:
-        results = [executor.submit(update_and_status_output, repo) for repo in repos]
-        for future in concurrent.futures.as_completed(results):
-            if future.result():
-                print(future.result())
-
-
-@cli.command()
-def goodbye(name: str):
-    """ Test. """
-    typer.echo(f'Goodbye {name}!')
-
+    
+    repo_paths, bare_repo_dicts = load_config()
+    repo_paths = [i for i in repo_paths if Path(i).is_dir() and '.git' in [j.name for j in Path(i).glob('*')]]
+    
+    # 3.58 seconds
+    # Parsing: 4.04 seconds, 4.26 seconds, 3.89 seconds
+    # Extend Parsing: 4.5 seconds
+    # Filter repo_paths: 2.5 seconds, 3.06, 3.03
+    repos = repo_paths + bare_repo_dicts
+    chains = [chain(r) for r in repos]
+    tasks = group(chains)
+    output = asyncio.run(tasks)
+    
+    for o in output:
+        status_stdout = o['status']['stdout']
+        parsed = parse_git_status(status_stdout)
+        parsed.name = o['name']
+        print(repo_output_handler(parsed))
+                
+    elapsed = time.perf_counter() - start
+    print(term.red(f"{len(repos)} executed in {elapsed:0.2f} seconds."))
 
 if __name__ == '__main__':
     cli()
