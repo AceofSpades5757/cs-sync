@@ -190,6 +190,7 @@ def get_file_info(raw):
         path = raw[7]
         original_path = None
 
+    staged = False
     subtype = raw[0][-1] if raw[0][-1] != '.' else raw[0][0]
     if raw[0][0] == '.':
         staged = False

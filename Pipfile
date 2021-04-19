@@ -8,6 +8,7 @@ typer = "*"
 sync = {editable = true, path = "."}
 blessed = "*"
 pysync = {editable = true, path = "."}
+pyyaml = "*"
 
 [dev-packages]
 jupyterlab = "*"
