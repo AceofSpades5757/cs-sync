@@ -1,4 +1,5 @@
 import subprocess
+import sys
 from pathlib import Path
 import yaml
 from glob import glob
@@ -53,6 +54,7 @@ def load_config():
 def all():
     """ Git, AWS, System Settings (Windows Terminal), etc. """
     git()
+    task()
 
 
 @cli.command()
@@ -85,6 +87,16 @@ def git():
     elapsed = time.perf_counter() - start
     print(term.red(f"{len(repos)} executed in {elapsed:0.2f} seconds."))
 
+
+@cli.command()
+def task():
+
+    """ Sync Taskwarrior with Taskserver. """
+
+    command = ['task', 'sync']
+    if sys.platform == 'win32':
+        command = ['wsl'] + command
+    subprocess.run(command)
 
 if __name__ == '__main__':
     cli()
