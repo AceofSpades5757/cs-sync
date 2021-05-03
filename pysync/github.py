@@ -101,7 +101,7 @@ async def chain(repo_path=None, git_dir=None, work_tree=None, name=None):
 
         # Can't check ahead-behind, so...
         stdout, stderr = await async_git_push(repo_path, git_dir, work_tree)
-        results['pull']['stdout'], results['pull']['stderr'] = stdout, stderr
+        results['push']['stdout'], results['push']['stderr'] = stdout, stderr
 
     if name:
         pass
