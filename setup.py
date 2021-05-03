@@ -14,7 +14,7 @@ with open("LICENSE", "r") as fin:
 
 setuptools.setup(
     name='pysync',
-    version='0.0.7',
+    version='0.1.0',
     install_requires=[
         'typer',
     ],
