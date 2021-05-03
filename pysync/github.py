@@ -13,8 +13,12 @@
 #     name: python3
 # ---
 
-from pathlib import Path
 import asyncio
+import re
+from pathlib import Path
+from types import SimpleNamespace
+
+
 
 async def async_run_command(command):
     """ Run an async command and return stdout and stderr. """
@@ -66,6 +70,7 @@ async def async_git_push(repo_path=None, git_dir=None, work_tree=None):
 
     return stdout, stderr
 
+
 async def async_git_status(repo_path=None, git_dir=None, work_tree=None):
     """`git status` on a directory, or git directory and work tree for bare
     repos."""
@@ -87,10 +92,9 @@ async def async_git_status(repo_path=None, git_dir=None, work_tree=None):
 
     return stdout, stderr
 
+
 async def chain(repo_path=None, git_dir=None, work_tree=None, name=None):
     """ Chain pull, status, and push (for bare repos). """
-
-    results = dict(name=name, pull={}, status={}, push={})
 
     if type(repo_path) != str:
 
@@ -99,10 +103,6 @@ async def chain(repo_path=None, git_dir=None, work_tree=None, name=None):
         name = repo_path.get('name', None)
         repo_path = None
 
-        # Can't check ahead-behind, so...
-        stdout, stderr = await async_git_push(repo_path, git_dir, work_tree)
-        results['push']['stdout'], results['push']['stderr'] = stdout, stderr
-
     if name:
         pass
     elif repo_path:
@@ -110,12 +110,19 @@ async def chain(repo_path=None, git_dir=None, work_tree=None, name=None):
     else:
         name = Path(git_dir).name
 
+    results = dict(name=name, pull={}, status={}, push={})
+
+    if not repo_path:  # Bare Repos
+        # Can't check ahead-behind, so...
+        stdout, stderr = await async_git_push(repo_path, git_dir, work_tree)
+        results['push']['stdout'], results['push']['stderr'] = stdout, stderr
     stdout, stderr = await async_git_pull(repo_path, git_dir, work_tree)
     results['pull']['stdout'], results['pull']['stderr'] = stdout, stderr
     stdout, stderr = await async_git_status(repo_path, git_dir, work_tree)
     results['status']['stdout'], results['status']['stderr'] = stdout, stderr
 
     return results
+
 
 async def group(repos: iter):
     """Main function, but async.
@@ -124,9 +131,6 @@ async def group(repos: iter):
     return await asyncio.gather(
         *repos
     )
-
-import re
-from types import SimpleNamespace
 
 
 def parse_git_status(stdout):
