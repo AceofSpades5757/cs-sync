@@ -26,6 +26,7 @@ async def async_run_command(command):
 
     return stdout, stderr
 
+
 async def async_git_pull(repo_path=None, git_dir=None, work_tree=None):
     """`git pull` on a directory, or git directory and work tree for bare
     repos."""
@@ -38,6 +39,26 @@ async def async_git_pull(repo_path=None, git_dir=None, work_tree=None):
             f'--git-dir="{git_dir}"',
             f'--work-tree="{work_tree}"',
             'pull',
+        ]
+        command = ' '.join(command)
+
+    stdout, stderr = await async_run_command(command)
+
+    return stdout, stderr
+
+
+async def async_git_push(repo_path=None, git_dir=None, work_tree=None):
+    """`git push` on a directory, or git directory and work tree for bare
+    repos."""
+    if repo_path:
+        command = ['git', '-C', fr'"{repo_path}"', 'push']
+        command = ' '.join(command)
+    else:
+        command = [
+            'git',
+            f'--git-dir="{git_dir}"',
+            f'--work-tree="{work_tree}"',
+            'push',
         ]
         command = ' '.join(command)
 
@@ -67,13 +88,20 @@ async def async_git_status(repo_path=None, git_dir=None, work_tree=None):
     return stdout, stderr
 
 async def chain(repo_path=None, git_dir=None, work_tree=None, name=None):
-    """ Chain multiple async parts together. """
+    """ Chain pull, status, and push (for bare repos). """
+
+    results = dict(name=name, pull={}, status={}, push={})
 
     if type(repo_path) != str:
+
         git_dir = repo_path['git_dir']
         work_tree = repo_path['work_tree']
         name = repo_path.get('name', None)
         repo_path = None
+
+        # Can't check ahead-behind, so...
+        stdout, stderr = await async_git_push(repo_path, git_dir, work_tree)
+        results['pull']['stdout'], results['pull']['stderr'] = stdout, stderr
 
     if name:
         pass
@@ -82,7 +110,6 @@ async def chain(repo_path=None, git_dir=None, work_tree=None, name=None):
     else:
         name = Path(git_dir).name
 
-    results = dict(name=name, pull={}, status={})
     stdout, stderr = await async_git_pull(repo_path, git_dir, work_tree)
     results['pull']['stdout'], results['pull']['stderr'] = stdout, stderr
     stdout, stderr = await async_git_status(repo_path, git_dir, work_tree)
