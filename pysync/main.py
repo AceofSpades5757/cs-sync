@@ -11,7 +11,7 @@ import time
 import typer
 from blessed import Terminal
 
-from pysync.github import async_git_pull, chain, group, parse_git_status
+from pysync.github import chain, group, parse_git_status
 from pysync.handlers import repo_output_handler
 
 
@@ -51,15 +51,14 @@ def load_config():
 
 
 @cli.command()
-def all():
+def all(short: bool = typer.Option(False, "--short")):
     """ Git, AWS, System Settings (Windows Terminal), etc. """
-    git()
+    git(short=short)
     task()
 
 
 @cli.command()
-def git():
-
+def git(short: bool = typer.Option(False, "--short")):
     """ Status, Pull, etc. all git repos. """
 
     repo_paths, bare_repo_dicts = load_config()
@@ -82,7 +81,22 @@ def git():
         status_stdout = o['status']['stdout']
         parsed = parse_git_status(status_stdout)
         parsed.name = o['name']
-        print(repo_output_handler(parsed))
+
+        if short:
+            # To tell if there's any changes that were made.
+            any_changes = any(i for i in [
+                parsed.ahead,
+                parsed.behind,
+                len(parsed.modified),
+                len(parsed.renamed),
+                len(parsed.deleted),
+                len(parsed.untracked),
+                len(parsed.ignored),
+                ])
+            if any_changes:
+                print(repo_output_handler(parsed))
+        else:
+            print(repo_output_handler(parsed))
 
     elapsed = time.perf_counter() - start
     print(term.red(f"{len(repos)} executed in {elapsed:0.2f} seconds."))
