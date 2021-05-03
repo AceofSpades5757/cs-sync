@@ -40,7 +40,7 @@ async def async_git_pull(repo_path=None, git_dir=None, work_tree=None):
             'pull',
         ]
         command = ' '.join(command)
-    
+
     stdout, stderr = await async_run_command(command)
 
     return stdout, stderr
@@ -68,26 +68,26 @@ async def async_git_status(repo_path=None, git_dir=None, work_tree=None):
 
 async def chain(repo_path=None, git_dir=None, work_tree=None, name=None):
     """ Chain multiple async parts together. """
-    
+
     if type(repo_path) != str:
         git_dir = repo_path['git_dir']
         work_tree = repo_path['work_tree']
         name = repo_path.get('name', None)
         repo_path = None
-    
+
     if name:
         pass
     elif repo_path:
         name = Path(repo_path).name
     else:
         name = Path(git_dir).name
-    
+
     results = dict(name=name, pull={}, status={})
     stdout, stderr = await async_git_pull(repo_path, git_dir, work_tree)
     results['pull']['stdout'], results['pull']['stderr'] = stdout, stderr
     stdout, stderr = await async_git_status(repo_path, git_dir, work_tree)
     results['status']['stdout'], results['status']['stderr'] = stdout, stderr
-    
+
     return results
 
 async def group(repos: iter):
@@ -103,7 +103,7 @@ from types import SimpleNamespace
 
 
 def parse_git_status(stdout):
-    
+
     lines = stdout.splitlines()
     repo = SimpleNamespace()
 
@@ -165,13 +165,13 @@ def parse_git_status(stdout):
     repo.untracked = untracked
     repo.ignored = ignored
     repo.all_changed_files = all_files
-    
+
     # Quickfix
     if repo.branch.oid:
         repo.online = True
     else:
         repo.online = False
-    
+
     return repo
 
 
