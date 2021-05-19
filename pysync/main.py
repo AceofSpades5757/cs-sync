@@ -69,7 +69,7 @@ def git(short: bool = typer.Option(False, "--short")):
     ]
 
     repos = repo_paths + bare_repo_dicts
-    chains = [chain_2(chain(r), parse_repo) for r in repos]
+    chains = [chain_2(chain(r), parse_repo, short) for r in repos]
     tasks = group(chains)
     output = asyncio.run(tasks)
 
@@ -110,9 +110,9 @@ async def parse_repo(o, short=False):
         print(repo_output_handler(parsed))
 
 
-async def chain_2(async_def, handler):
+async def chain_2(async_def, handler, *args, **kwargs):
     results = await async_def
-    await handler(results)
+    await handler(results, *args, **kwargs)
     return results
 
 
