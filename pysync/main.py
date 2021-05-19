@@ -68,35 +68,10 @@ def git(short: bool = typer.Option(False, "--short")):
         if Path(i).is_dir() and '.git' in [j.name for j in Path(i).glob('*')]
     ]
 
-    # 3.58 seconds
-    # Parsing: 4.04 seconds, 4.26 seconds, 3.89 seconds
-    # Extend Parsing: 4.5 seconds
-    # Filter repo_paths: 2.5 seconds, 3.06, 3.03
     repos = repo_paths + bare_repo_dicts
-    chains = [chain(r) for r in repos]
+    chains = [chain_2(chain(r), parse_repo) for r in repos]
     tasks = group(chains)
     output = asyncio.run(tasks)
-
-    for o in output:
-        status_stdout = o['status']['stdout']
-        parsed = parse_git_status(status_stdout)
-        parsed.name = o['name']
-
-        if short:
-            # To tell if there's any changes that were made.
-            any_changes = any(i for i in [
-                parsed.ahead,
-                parsed.behind,
-                len(parsed.modified),
-                len(parsed.renamed),
-                len(parsed.deleted),
-                len(parsed.untracked),
-                len(parsed.ignored),
-                ])
-            if any_changes:
-                print(repo_output_handler(parsed))
-        else:
-            print(repo_output_handler(parsed))
 
     elapsed = time.perf_counter() - start
     print(term.red(f"{len(repos)} executed in {elapsed:0.2f} seconds."))
@@ -111,6 +86,35 @@ def task():
     if sys.platform == 'win32':
         command = ['wsl'] + command
     subprocess.run(command)
+
+
+async def parse_repo(o, short=False):
+    status_stdout = o['status']['stdout']
+    parsed = parse_git_status(status_stdout)
+    parsed.name = o['name']
+
+    if short:
+        # To tell if there's any changes that were made.
+        any_changes = any(i for i in [
+            parsed.ahead,
+            parsed.behind,
+            len(parsed.modified),
+            len(parsed.renamed),
+            len(parsed.deleted),
+            len(parsed.untracked),
+            len(parsed.ignored),
+            ])
+        if any_changes:
+            print(repo_output_handler(parsed))
+    else:
+        print(repo_output_handler(parsed))
+
+
+async def chain_2(async_def, handler):
+    results = await async_def
+    await handler(results)
+    return results
+
 
 if __name__ == '__main__':
     cli()
