@@ -45,7 +45,6 @@ def repo_output_handler(repo, tabs=1):
         repo_condition = 'blue'
 
     try:
-        header = f"{(tabs-1)*indent} {repo.name}{' ' + repo.branch.head if repo.branch.head else ''} {repo.ahead:+} {repo.behind:+} ~{len(repo.modified)} -{len(repo.deleted)}"
         header = [(tabs - 1) * indent, repo.name]
         if repo.branch.head:
             header.append(term.magenta(repo.branch.head))
@@ -63,13 +62,20 @@ def repo_output_handler(repo, tabs=1):
     except Exception:  # For Bare Repos
         header = f"{(tabs-1)*indent} {repo.name} {len(repo.modified):+}"
 
-    if repo_condition == 'green':
-        results.insert(0, term.green(f"✓ {header}"))
-    elif repo_condition == 'yellow':
-        results.insert(0, term.yellow(f"⚠ {header}"))
-    elif repo_condition == 'red':
-        results.insert(0, term.red(f"! {header}"))
-    elif repo_condition == 'blue':
-        results.insert(0, term.blue(f"? {header}"))
+    conditions = {"green": lambda iterable, item:
+                  iterable.insert(0, term.green(f"✓ {item}")),
+                  "yellow": lambda iterable, item:
+                  iterable.insert(0, term.yellow(f"⚠ {header}")),
+                  "red": lambda iterable, item:
+                  iterable.insert(0, term.red(f"! {header}")),
+
+                  "blue": lambda iterable, item:
+                  iterable.insert(0, term.blue(f"? {header}")),
+
+                  "default": lambda iterable, item:
+                  iterable.insert(0, f"? {header}"),
+                  }
+    add_header = conditions.get(repo_condition, conditions['default'])
+    add_header(results, header)
 
     return '\n'.join(results)
