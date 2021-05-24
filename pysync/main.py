@@ -1,7 +1,6 @@
 import subprocess
 import sys
 from pathlib import Path
-import yaml
 from glob import glob
 import functools
 import operator
@@ -9,6 +8,7 @@ import asyncio
 import time
 
 import typer
+import yaml
 from blessed import Terminal
 
 from pysync.github import chain, group
