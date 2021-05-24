@@ -1,9 +1,5 @@
-""" Basic setup.py using setuptools.
-
-Classifiers
------------
-[Dynamic List of Classifiers](https://pypi.org/classifiers/)
-"""
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import setuptools
 
 
