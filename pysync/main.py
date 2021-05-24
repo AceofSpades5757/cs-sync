@@ -49,7 +49,7 @@ def load_config():
     return repo_paths, bare_repo_dicts
 
 
-def async_time_decorator(original_async_function):
+def measure_time_async(original_async_function):
 
     async def wrapper(*args, **kwargs):
 
@@ -69,6 +69,32 @@ def async_time_decorator(original_async_function):
     return wrapper
 
 
+def measure_time(original_async_function):
+
+    def wrapper(*args, **kwargs):
+
+        # Work Before
+        start = __import__('time').perf_counter()
+
+        # Run Async Function
+        results = original_async_function(*args, **kwargs)
+
+        # Work After
+        elapsed = __import__('time').perf_counter() - start
+        print(term.red(f"Executed in {elapsed:0.2f} seconds."))
+
+        # Return results
+        return results
+
+    return wrapper
+
+
+async def chain_handler(async_def, handler, *args, **kwargs):
+    results = await async_def
+    await handler(results, *args, **kwargs)
+    return results
+
+
 @cli.command()
 def all(short: bool = typer.Option(False, "--short")):
     """ Git, AWS, System Settings (Windows Terminal), etc. """
@@ -76,6 +102,7 @@ def all(short: bool = typer.Option(False, "--short")):
     task()
 
 
+@measure_time
 @cli.command()
 def git(short: bool = typer.Option(False, "--short")):
     """ Status, Pull, etc. all git repos. """
@@ -91,7 +118,7 @@ def git(short: bool = typer.Option(False, "--short")):
     start = time.perf_counter()
 
     repos = repo_paths + bare_repo_dicts
-    chains = [chain_2(chain(r), parse_repo, short) for r in repos]
+    chains = [chain_handler(chain(r), parse_repo, short) for r in repos]
     tasks = group(chains)
     _ = asyncio.run(tasks)
 
@@ -114,12 +141,3 @@ def task():
 
 if __name__ == '__main__':
     cli()
-
-
-""" Move below to appropriate files and rename/refactor. """
-
-
-async def chain_2(async_def, handler, *args, **kwargs):
-    results = await async_def
-    await handler(results, *args, **kwargs)
-    return results
