@@ -1,9 +1,6 @@
 import subprocess
 import sys
 from pathlib import Path
-from glob import glob
-import functools
-import operator
 import asyncio
 import time
 
@@ -11,6 +8,7 @@ import typer
 import yaml
 from blessed import Terminal
 
+from pysync.helpers import expand_path, flatten_list
 from pysync.github import chain, group
 from pysync.handlers import parse_repo
 
@@ -21,25 +19,6 @@ cli = typer.Typer()
 
 # Config
 config_file = Path.home() / '.pysync'
-
-
-def expand_path(path):
-    path = glob(str(Path(path).expanduser()))
-    return path
-
-
-def flatten_list(nested_list: list or tuple) -> list:
-
-    supported_types = (list, tuple)
-
-    results = []
-    for item in nested_list:
-        if not isinstance(item, supported_types):
-            results.append(item)
-        else:
-            results.extend(flatten_list(item))
-
-    return results
 
 
 def load_config() -> [list, list]:
