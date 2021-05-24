@@ -5,14 +5,13 @@ name = "pypi"
 
 [packages]
 typer = "*"
-sync = {editable = true, path = "."}
 blessed = "*"
-pysync = {editable = true, path = "."}
 pyyaml = "*"
 
 [dev-packages]
 jupyterlab = "*"
 jupytext = "*"
+pysync = {editable = true, path = "."}
 
 [requires]
 python_version = "3.9"
