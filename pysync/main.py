@@ -11,8 +11,8 @@ import time
 import typer
 from blessed import Terminal
 
-from pysync.github import chain, group, parse_git_status
-from pysync.handlers import repo_output_handler
+from pysync.github import chain, group
+from pysync.handlers import parse_repo
 
 
 term = Terminal()
@@ -117,28 +117,6 @@ if __name__ == '__main__':
 
 
 """ Move below to appropriate files and rename/refactor. """
-
-
-async def parse_repo(o, short=False):
-    status_stdout = o['status']['stdout']
-    parsed = parse_git_status(status_stdout)
-    parsed.name = o['name']
-
-    if short:
-        # To tell if there's any changes that were made.
-        any_changes = any(i for i in [
-            parsed.ahead,
-            parsed.behind,
-            len(parsed.modified),
-            len(parsed.renamed),
-            len(parsed.deleted),
-            len(parsed.untracked),
-            len(parsed.ignored),
-            ])
-        if any_changes:
-            print(repo_output_handler(parsed))
-    else:
-        print(repo_output_handler(parsed))
 
 
 async def chain_2(async_def, handler, *args, **kwargs):
