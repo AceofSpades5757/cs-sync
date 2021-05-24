@@ -60,7 +60,7 @@ def repo_output_handler(repo, tabs=1):
         if repo.untracked:
             header.append(term.cyan(f'…{len(repo.untracked)}'))
         header = ' '.join(header)
-    except:  # For Bare Repos
+    except Exception:  # For Bare Repos
         header = f"{(tabs-1)*indent} {repo.name} {len(repo.modified):+}"
 
     if repo_condition == 'green':
