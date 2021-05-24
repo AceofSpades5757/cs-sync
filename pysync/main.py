@@ -58,13 +58,13 @@ def measure_time_async(original_async_function):
     async def wrapper(*args, **kwargs):
 
         # Work Before
-        start = __import__('time').perf_counter()
+        start = time.perf_counter()
 
         # Run Async Function
         results = await original_async_function(*args, **kwargs)
 
         # Work After
-        elapsed = __import__('time').perf_counter() - start
+        elapsed = time.perf_counter() - start
         print(term.red(f"Executed in {elapsed:0.2f} seconds."))
 
         # Return results
