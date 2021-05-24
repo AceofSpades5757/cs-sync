@@ -28,8 +28,18 @@ def expand_path(path):
     return path
 
 
-def flatten_list(nested_list):
-    return functools.reduce(operator.iconcat, nested_list, [])
+def flatten_list(nested_list: list or tuple) -> list:
+
+    supported_types = (list, tuple)
+
+    results = []
+    for item in nested_list:
+        if not isinstance(item, supported_types):
+            results.append(item)
+        else:
+            results.extend(flatten_list(item))
+
+    return results
 
 
 def load_config() -> [list, list]:
