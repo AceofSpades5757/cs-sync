@@ -17,7 +17,6 @@ from pysync.handlers import repo_output_handler
 
 term = Terminal()
 cli = typer.Typer()
-start = time.perf_counter()
 
 
 # Config
@@ -50,6 +49,26 @@ def load_config():
     return repo_paths, bare_repo_dicts
 
 
+def async_time_decorator(original_async_function):
+
+    async def wrapper(*args, **kwargs):
+
+        # Work Before
+        start = __import__('time').perf_counter()
+
+        # Run Async Function
+        results = await original_async_function(*args, **kwargs)
+
+        # Work After
+        elapsed = __import__('time').perf_counter() - start
+        print(term.red(f"Executed in {elapsed:0.2f} seconds."))
+
+        # Return results
+        return results
+
+    return wrapper
+
+
 @cli.command()
 def all(short: bool = typer.Option(False, "--short")):
     """ Git, AWS, System Settings (Windows Terminal), etc. """
@@ -68,24 +87,36 @@ def git(short: bool = typer.Option(False, "--short")):
         if Path(i).is_dir() and '.git' in [j.name for j in Path(i).glob('*')]
     ]
 
+    # Start Timer
+    start = time.perf_counter()
+
     repos = repo_paths + bare_repo_dicts
     chains = [chain_2(chain(r), parse_repo, short) for r in repos]
     tasks = group(chains)
-    output = asyncio.run(tasks)
+    _ = asyncio.run(tasks)
 
+    # End Timer & Calculate Time Elapsed
     elapsed = time.perf_counter() - start
+
+    # Print Time Elapsed
     print(term.red(f"{len(repos)} executed in {elapsed:0.2f} seconds."))
 
 
 @cli.command()
 def task():
-
     """ Sync Taskwarrior with Taskserver. """
 
     command = ['task', 'sync']
     if sys.platform == 'win32':
         command = ['wsl'] + command
     subprocess.run(command)
+
+
+if __name__ == '__main__':
+    cli()
+
+
+""" Move below to appropriate files and rename/refactor. """
 
 
 async def parse_repo(o, short=False):
@@ -114,7 +145,3 @@ async def chain_2(async_def, handler, *args, **kwargs):
     results = await async_def
     await handler(results, *args, **kwargs)
     return results
-
-
-if __name__ == '__main__':
-    cli()
