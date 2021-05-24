@@ -32,7 +32,11 @@ def flatten_list(nested_list):
     return functools.reduce(operator.iconcat, nested_list, [])
 
 
-def load_config():
+def load_config() -> [list, list]:
+    """ Get configuration from config file.
+
+    Returns repo_paths and bare_repo_dicts.
+    """
     if config_file.exists():
         with open(config_file, "r") as ymlfile:
             config = yaml.load(ymlfile, Loader=yaml.Loader)
@@ -114,19 +118,10 @@ def git(short: bool = typer.Option(False, "--short")):
         if Path(i).is_dir() and '.git' in [j.name for j in Path(i).glob('*')]
     ]
 
-    # Start Timer
-    start = time.perf_counter()
-
     repos = repo_paths + bare_repo_dicts
     chains = [chain_handler(chain(r), parse_repo, short) for r in repos]
     tasks = group(chains)
     _ = asyncio.run(tasks)
-
-    # End Timer & Calculate Time Elapsed
-    elapsed = time.perf_counter() - start
-
-    # Print Time Elapsed
-    print(term.red(f"{len(repos)} executed in {elapsed:0.2f} seconds."))
 
 
 @cli.command()
