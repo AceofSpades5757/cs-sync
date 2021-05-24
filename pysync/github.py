@@ -19,7 +19,6 @@ from pathlib import Path
 from types import SimpleNamespace
 
 
-
 async def async_run_command(command):
     """ Run an async command and return stdout and stderr. """
     process = await asyncio.create_subprocess_shell(
@@ -76,7 +75,8 @@ async def async_git_status(repo_path=None, git_dir=None, work_tree=None):
     repos."""
 
     if repo_path:
-        command = ['git', '-C', fr'"{ repo_path }"', 'status',  '--porcelain=2', '-b']
+        command = ['git', '-C', fr'"{ repo_path }"', 'status',
+                   '--porcelain=2', '-b']
         command = " ".join(command)
     else:
         command = [
@@ -150,7 +150,14 @@ def parse_git_status(stdout):
     upstream_group = '# branch.upstream (?P<upstream>.*)'
     ahead_behind_group = '# branch.ab (?P<ahead>.*) (?P<behind>.*)'
     space = r'\s*'
-    branch_re = re.compile(fr'({oid_group})?{space}({head_group})?{space}({upstream_group})?{space}({ahead_behind_group})?')
+    branch_re = re.compile(fr'({oid_group})?'
+                           + fr'{space}'
+                           + fr'({head_group})?'
+                           + fr'{space}'
+                           + fr'({upstream_group})?'
+                           + fr'{space}'
+                           + fr'({ahead_behind_group})?'
+                           )
 
     branch_info = [i for i in lines if i.startswith('#')]
     branch_match = branch_re.match('\n'.join(branch_info))
@@ -159,19 +166,26 @@ def parse_git_status(stdout):
         oid=branch_match.group('oid'),
         head=branch_match.group('head'),
         upstream=branch_match.group('upstream'),
-        ahead=int(branch_match.group('ahead') if branch_match.group('ahead') else 0),
-        behind=int(branch_match.group('behind') if branch_match.group('behind') else 0),
+        ahead=int(branch_match.group('ahead')
+                  if branch_match.group('ahead')
+                  else 0),
+        behind=int(branch_match.group('behind')
+                   if branch_match.group('behind')
+                   else 0),
     )
 
     # Changed
     modified = [get_file_info(i.split(maxsplit=9)) for i in modified]
 
     # Renamed or Copied
-    renamed_or_copied = [get_file_info(i.split(maxsplit=10)) for i in renamed_or_copied]
+    renamed_or_copied = [get_file_info(i.split(maxsplit=10))
+                         for i in renamed_or_copied]
 
     # Untracked
-    untracked = [i.split(maxsplit=1)[1] for i in untracked]
-    untracked = [SimpleNamespace(path=i, type='Untracked') for i in untracked]
+    untracked = [i.split(maxsplit=1)[1]
+                 for i in untracked]
+    untracked = [SimpleNamespace(path=i, type='Untracked')
+                 for i in untracked]
 
     # Ignored
     # Only if `--ignored=matching` is included
