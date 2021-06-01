@@ -7,10 +7,9 @@ from blessed import Terminal
 term = Terminal()
 
 
-def repo_output_handler(repo, tabs=1):
+def repo_output_handler(repo, tabs=1, indent='\t'):
 
     results = []
-    indent = '\t'
     repo_condition = 'green'
     for i in repo.modified:
         results.append(term.yellow(f'{tabs*indent}modified: {i.path}'))
