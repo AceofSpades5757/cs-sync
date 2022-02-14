@@ -26,8 +26,9 @@ setuptools.setup(
         'Programming Language :: Python :: 3',
         'Operating System :: OS Independent',
     ],
-    entry_points="""
-        [console_scripts]
-        cssync=cs_sync.main:cli
-    """,
+    entry_points={
+        'console_scripts': [
+            'cs-sync = cs_sync.main:cli',
+        ],
+    },
 )
