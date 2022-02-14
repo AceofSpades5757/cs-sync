@@ -4,6 +4,12 @@
 
 A custom syncing tool. Originally used to simply tasks such as checking on my local Git repositories and syncing to my Taskwarrior server. May someday add S3 support.
 
+# Installation
+
+PyPi - The Python Package Index
+
+`pip install cs-sync`
+
 ## Current Support
 
 * Git
