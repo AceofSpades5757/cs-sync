@@ -8,11 +8,12 @@ from pathlib import Path
 import typer
 import yaml
 from blessed import Terminal
-from pysync.github import chain
-from pysync.github import group
-from pysync.handlers import parse_repo
-from pysync.helpers import expand_path
-from pysync.helpers import flatten_list
+
+from cs_sync.github import chain
+from cs_sync.github import group
+from cs_sync.handlers import parse_repo
+from cs_sync.helpers import expand_path
+from cs_sync.helpers import flatten_list
 
 
 term = Terminal()
@@ -20,7 +21,7 @@ cli = typer.Typer()
 
 
 # Config
-config_file = Path.home() / '.pysync'
+config_file = Path.home() / '.cssync'
 
 
 def load_config() -> [list, list]:
