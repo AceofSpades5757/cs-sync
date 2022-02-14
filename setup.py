@@ -28,6 +28,6 @@ setuptools.setup(
     ],
     entry_points="""
         [console_scripts]
-        cs-sync=cs_sync.main:cli
+        cssync=cs_sync.main:cli
     """,
 )
