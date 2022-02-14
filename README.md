@@ -31,6 +31,11 @@ The default is to check your config file, located at `~/.cssync`, and load up yo
 `--short`
 : Won't show the repos that are up to date.
 
+## Taskwarrior
+
+`cs-sync tasks`
+: Simply runs `task sync` to sync your tasks with your Taskwarrior server.
+
 # Example .cssync file
 
 ```yaml
