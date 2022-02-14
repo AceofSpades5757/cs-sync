@@ -9,6 +9,8 @@ blessed = "*"
 pyyaml = "*"
 
 [dev-packages]
+cs-sync = {editable = true, path = "."}
 wheel = "*"
+setuptools = "*"
 
 [requires]
