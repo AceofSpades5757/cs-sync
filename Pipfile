@@ -9,5 +9,6 @@ blessed = "*"
 pyyaml = "*"
 
 [dev-packages]
+wheel = "*"
 
 [requires]
