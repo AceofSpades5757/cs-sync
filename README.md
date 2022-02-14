@@ -1,4 +1,8 @@
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/cs-sync?label=Python%20Version&logo=python&logoColor=yellow)
+![PyPI - License](https://img.shields.io/pypi/l/cs-sync?color=green)
+![PyPI](https://img.shields.io/pypi/v/cs-sync?color=darkred)
+<!--![PyPI - Status](https://img.shields.io/pypi/status/cs-sync)-->
 
 # Descriptions
 
