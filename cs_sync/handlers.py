@@ -49,19 +49,21 @@ def repo_output_handler(repo, tabs=1, indent='\t'):
     except Exception:  # For Bare Repos
         header = f"{(tabs-1)*indent} {repo.name} {len(repo.modified):+}"
 
-    conditions = {"green": lambda iterable, item:
-                  iterable.insert(0, term.green(f"✓ {item}")),
-                  "yellow": lambda iterable, item:
-                  iterable.insert(0, term.yellow(f"⚠ {header}")),
-                  "red": lambda iterable, item:
-                  iterable.insert(0, term.red(f"! {header}")),
-
-                  "blue": lambda iterable, item:
-                  iterable.insert(0, term.blue(f"? {header}")),
-
-                  "default": lambda iterable, item:
-                  iterable.insert(0, f"? {header}"),
-                  }
+    conditions = {
+        "green": lambda iterable, item: iterable.insert(
+            0, term.green(f"✓ {item}")
+        ),
+        "yellow": lambda iterable, item: iterable.insert(
+            0, term.yellow(f"⚠ {header}")
+        ),
+        "red": lambda iterable, item: iterable.insert(
+            0, term.red(f"! {header}")
+        ),
+        "blue": lambda iterable, item: iterable.insert(
+            0, term.blue(f"? {header}")
+        ),
+        "default": lambda iterable, item: iterable.insert(0, f"? {header}"),
+    }
     add_header = conditions.get(repo_condition, conditions['default'])
     add_header(results, header)
 
@@ -75,15 +77,18 @@ async def parse_repo(parsed_output: dict, short: bool = False):
 
     if short:
         # To tell if there's any changes that were made.
-        any_changes = any(i for i in [
-            parsed.ahead,
-            parsed.behind,
-            len(parsed.modified),
-            len(parsed.renamed),
-            len(parsed.deleted),
-            len(parsed.untracked),
-            len(parsed.ignored),
-            ])
+        any_changes = any(
+            i
+            for i in [
+                parsed.ahead,
+                parsed.behind,
+                len(parsed.modified),
+                len(parsed.renamed),
+                len(parsed.deleted),
+                len(parsed.untracked),
+                len(parsed.ignored),
+            ]
+        )
         if any_changes:
             print(repo_output_handler(parsed))
     else:
@@ -107,14 +112,15 @@ def parse_git_status(stdout):
     upstream_group = '# branch.upstream (?P<upstream>.*)'
     ahead_behind_group = '# branch.ab (?P<ahead>.*) (?P<behind>.*)'
     space = r'\s*'
-    branch_re = re.compile(fr'({oid_group})?'
-                           + fr'{space}'
-                           + fr'({head_group})?'
-                           + fr'{space}'
-                           + fr'({upstream_group})?'
-                           + fr'{space}'
-                           + fr'({ahead_behind_group})?'
-                           )
+    branch_re = re.compile(
+        fr'({oid_group})?'
+        + fr'{space}'
+        + fr'({head_group})?'
+        + fr'{space}'
+        + fr'({upstream_group})?'
+        + fr'{space}'
+        + fr'({ahead_behind_group})?'
+    )
 
     branch_info = [i for i in lines if i.startswith('#')]
     branch_match = branch_re.match('\n'.join(branch_info))
@@ -123,26 +129,25 @@ def parse_git_status(stdout):
         oid=branch_match.group('oid'),
         head=branch_match.group('head'),
         upstream=branch_match.group('upstream'),
-        ahead=int(branch_match.group('ahead')
-                  if branch_match.group('ahead')
-                  else 0),
-        behind=int(branch_match.group('behind')
-                   if branch_match.group('behind')
-                   else 0),
+        ahead=int(
+            branch_match.group('ahead') if branch_match.group('ahead') else 0
+        ),
+        behind=int(
+            branch_match.group('behind') if branch_match.group('behind') else 0
+        ),
     )
 
     # Changed
     modified = [get_file_info(i.split(maxsplit=9)) for i in modified]
 
     # Renamed or Copied
-    renamed_or_copied = [get_file_info(i.split(maxsplit=10))
-                         for i in renamed_or_copied]
+    renamed_or_copied = [
+        get_file_info(i.split(maxsplit=10)) for i in renamed_or_copied
+    ]
 
     # Untracked
-    untracked = [i.split(maxsplit=1)[1]
-                 for i in untracked]
-    untracked = [SimpleNamespace(path=i, type='Untracked')
-                 for i in untracked]
+    untracked = [i.split(maxsplit=1)[1] for i in untracked]
+    untracked = [SimpleNamespace(path=i, type='Untracked') for i in untracked]
 
     # Ignored
     # Only if `--ignored=matching` is included

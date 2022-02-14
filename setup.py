@@ -9,7 +9,7 @@ with open('LICENSE', 'r') as fin:
     license = fin.read()
 
 setuptools.setup(
-    name='pysync',
+    name='cs-sync',
     version='0.0.19',
     license=license,
     author='Kyle L. Davis',
@@ -28,6 +28,6 @@ setuptools.setup(
     ],
     entry_points="""
         [console_scripts]
-        pysync=pysync.main:cli
+        cs-sync=cs_sync.main:cli
     """,
 )

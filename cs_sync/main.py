@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
+import asyncio
 import subprocess
 import sys
-from pathlib import Path
-import asyncio
 import time
+from pathlib import Path
 
 import typer
 import yaml
 from blessed import Terminal
-
-from pysync.helpers import expand_path, flatten_list
-from pysync.github import chain, group
+from pysync.github import chain
+from pysync.github import group
 from pysync.handlers import parse_repo
+from pysync.helpers import expand_path
+from pysync.helpers import flatten_list
 
 
 term = Terminal()
@@ -23,7 +24,7 @@ config_file = Path.home() / '.pysync'
 
 
 def load_config() -> [list, list]:
-    """ Get configuration from config file.
+    """Get configuration from config file.
 
     Returns repo_paths and bare_repo_dicts.
     """
@@ -44,7 +45,6 @@ def load_config() -> [list, list]:
 
 
 def measure_time_async(original_async_function):
-
     async def wrapper(*args, **kwargs):
 
         # Work Before
@@ -64,7 +64,6 @@ def measure_time_async(original_async_function):
 
 
 def measure_time(original_async_function):
-
     def wrapper(*args, **kwargs):
 
         # Work Before
@@ -91,7 +90,7 @@ async def chain_handler(async_def, handler, *args, **kwargs):
 
 @cli.command()
 def all(short: bool = typer.Option(False, "--short")):
-    """ Git, AWS, System Settings (Windows Terminal), etc. """
+    """Git, AWS, System Settings (Windows Terminal), etc."""
     git(short=short)
     task()
 
@@ -99,7 +98,7 @@ def all(short: bool = typer.Option(False, "--short")):
 @measure_time
 @cli.command()
 def git(short: bool = typer.Option(False, "--short")):
-    """ Status, Pull, etc. all git repos. """
+    """Status, Pull, etc. all git repos."""
 
     repo_paths, bare_repo_dicts = load_config()
     repo_paths = [
@@ -116,7 +115,7 @@ def git(short: bool = typer.Option(False, "--short")):
 
 @cli.command()
 def task():
-    """ Sync Taskwarrior with Taskserver. """
+    """Sync Taskwarrior with Taskserver."""
 
     command = ['task', 'sync']
     if sys.platform == 'win32':

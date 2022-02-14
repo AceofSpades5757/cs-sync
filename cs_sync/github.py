@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 async def async_run_command(command):
-    """ Run an async command and return stdout and stderr. """
+    """Run an async command and return stdout and stderr."""
     process = await asyncio.create_subprocess_shell(
         command, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
     )
@@ -59,8 +59,14 @@ async def async_git_status(repo_path=None, git_dir=None, work_tree=None):
     repos."""
 
     if repo_path:
-        command = ['git', '-C', fr'"{ repo_path }"', 'status',
-                   '--porcelain=2', '-b']
+        command = [
+            'git',
+            '-C',
+            fr'"{ repo_path }"',
+            'status',
+            '--porcelain=2',
+            '-b',
+        ]
         command = " ".join(command)
     else:
         command = [
@@ -69,7 +75,7 @@ async def async_git_status(repo_path=None, git_dir=None, work_tree=None):
             f'--work-tree="{work_tree}"',
             'status',
             '--porcelain=2',
-            '-b'
+            '-b',
         ]
         command = ' '.join(command)
     stdout, stderr = await async_run_command(command)
@@ -78,7 +84,7 @@ async def async_git_status(repo_path=None, git_dir=None, work_tree=None):
 
 
 async def chain(repo_path=None, git_dir=None, work_tree=None, name=None):
-    """ Chain pull, status, and push (for bare repos). """
+    """Chain pull, status, and push (for bare repos)."""
 
     if type(repo_path) != str:
 
@@ -112,6 +118,4 @@ async def group(repos: iter):
     """Main function, but async.
     Chain pulls and status checks to each repo/bare repo, then run them.
     """
-    return await asyncio.gather(
-        *repos
-    )
+    return await asyncio.gather(*repos)
