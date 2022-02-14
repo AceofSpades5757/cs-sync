@@ -1,5 +1,5 @@
-from cs_sync.main import main
+from cs_sync.main import cli
 
 
 if __name__ == '__main__':
-    main()
+    cli()
