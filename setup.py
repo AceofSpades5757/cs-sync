@@ -10,7 +10,7 @@ with open('LICENSE', 'r') as fin:
 
 setuptools.setup(
     name='pysync',
-    version='0.1.9',
+    version='0.0.19',
     license=license,
     author='Kyle L. Davis',
     author_email='AceofSpades5757.github@gmail.com',
