@@ -9,10 +9,5 @@ blessed = "*"
 pyyaml = "*"
 
 [dev-packages]
-jupyterlab = "*"
-jupytext = "*"
-pysync = {editable = true, path = "."}
-pylint = "*"
 
 [requires]
-python_version = "3.9"
