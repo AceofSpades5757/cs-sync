@@ -12,5 +12,6 @@ pyyaml = "*"
 cs-sync = {editable = true, path = "."}
 wheel = "*"
 setuptools = "*"
+tox = "*"
 
 [requires]
