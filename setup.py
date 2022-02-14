@@ -10,7 +10,7 @@ with open('LICENSE', 'r') as fin:
 
 setuptools.setup(
     name='cs-sync',
-    version='0.0.19',
+    version='0.0.20',
     license=license,
     author='Kyle L. Davis',
     author_email='AceofSpades5757.github@gmail.com',
