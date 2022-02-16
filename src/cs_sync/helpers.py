@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 from glob import glob
 from pathlib import Path
+from typing import List
 from typing import Union
 
 
-def expand_path(path: Union[str, Path]) -> list[str]:
-    paths: list[str] = glob(str(Path(path).expanduser()))
+def expand_path(path: Union[str, Path]) -> List[str]:
+    paths: List[str] = glob(str(Path(path).expanduser()))
     return paths
 
 

@@ -4,7 +4,9 @@ import subprocess
 import sys
 import time
 from pathlib import Path
-from typing import Union
+from typing import Dict
+from typing import List
+from typing import Tuple
 
 import typer
 import yaml
@@ -24,7 +26,7 @@ cli = typer.Typer()
 config_file = Path.home() / '.cssync'
 
 
-def load_config() -> tuple[list, list]:
+def load_config() -> Tuple[List, List]:
     """Get configuration from config file.
 
     Returns repo_paths and bare_repo_dicts.
@@ -35,8 +37,8 @@ def load_config() -> tuple[list, list]:
         repo_paths = flatten_list(
             [expand_path(i) for i in config.get('repo_paths', [])]
         )
-        bare_repo_dicts: list[dict] = config.get('bare_repos', [])
-        bare_repo: dict[str, str]
+        bare_repo_dicts: List[Dict] = config.get('bare_repos', [])
+        bare_repo: Dict[str, str]
         for bare_repo in bare_repo_dicts:
             bare_repo['git_dir'] = expand_path(bare_repo['git_dir'])[0]
             bare_repo['work_tree'] = expand_path(bare_repo['work_tree'])[0]
@@ -112,7 +114,11 @@ def git(short: bool = typer.Option(False, "--short")):
     repos = repo_paths + bare_repo_dicts
     chains = [chain_handler(chain(r), parse_repo, short) for r in repos]
     tasks = group(chains)
-    _ = asyncio.run(tasks)
+    if sys.version > '3.6':
+        _ = asyncio.run(tasks)
+    else:
+        loop = asyncio.get_event_loop()
+        _ = loop.run_until_complete(tasks)
 
 
 @cli.command()
