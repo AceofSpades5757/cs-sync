@@ -26,4 +26,4 @@ repos:
   rev: v0.931
   hooks:
   - id: mypy
-    additional_dependencies: []
+    additional_dependencies: [types-pyyaml]
