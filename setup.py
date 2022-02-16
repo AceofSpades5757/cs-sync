@@ -10,7 +10,7 @@ with open('LICENSE', 'r') as fin:
 
 setuptools.setup(
     name='cs-sync',
-    version='0.1.0',
+    version='0.1.2',
     license='MIT',
     author='Kyle L. Davis',
     author_email='AceofSpades5757.github@gmail.com',
@@ -21,8 +21,11 @@ setuptools.setup(
     long_description_content_type='text/markdown',
     url='https://kyleldavis.com/',
     python_requires='>=3.6',
-    packages=setuptools.find_packages(),
-    package_dir={'': 'src'},
+    packages=setuptools.find_packages('src'),
+    package_dir={
+        '': 'src',
+        'cs_sync': 'src/cs_sync',
+    },
     classifiers=[
         'Programming Language :: Python :: 3',
         'Operating System :: OS Independent',
