@@ -13,5 +13,6 @@ cs-sync = {editable = true, path = "."}
 wheel = "*"
 setuptools = "*"
 tox = "*"
+types-pyyaml = "*"
 
 [requires]
