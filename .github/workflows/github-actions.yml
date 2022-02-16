@@ -2,10 +2,9 @@ name: GitHub Workflow
 on: [push]
 
 jobs:
-
   Build:
-
+    runs-on: ubuntu-latest
     steps:
-
-      - name: Test using built-in unittest library.
-      - run: python -m unittest
+    - name: Test using built-in unittest library.
+      run: |
+        python -m unittest
