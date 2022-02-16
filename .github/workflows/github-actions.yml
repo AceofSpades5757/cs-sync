@@ -1,0 +1,11 @@
+name: GitHub Workflow
+on: [push]
+
+jobs:
+
+  Build:
+
+    steps:
+
+      - name: Test using built-in unittest library.
+      - run: python -m unittest
