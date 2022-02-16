@@ -7,4 +7,4 @@ jobs:
     steps:
     - name: Test using built-in unittest library.
       run: |
-        pytest
+        python -m unittest
