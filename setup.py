@@ -22,6 +22,7 @@ setuptools.setup(
     url='https://kyleldavis.com/',
     python_requires='>=3.6',
     packages=setuptools.find_packages(),
+    package_dir={'': 'src'},
     classifiers=[
         'Programming Language :: Python :: 3',
         'Operating System :: OS Independent',

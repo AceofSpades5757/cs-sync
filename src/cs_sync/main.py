@@ -8,7 +8,6 @@ from pathlib import Path
 import typer
 import yaml
 from blessed import Terminal
-
 from cs_sync.github import chain
 from cs_sync.github import group
 from cs_sync.handlers import parse_repo
