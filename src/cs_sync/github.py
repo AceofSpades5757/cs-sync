@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import asyncio
 from pathlib import Path
+from typing import Coroutine
+from typing import Iterable
 
 
 async def async_run_command(command):
@@ -114,7 +116,7 @@ async def chain(repo_path=None, git_dir=None, work_tree=None, name=None):
     return results
 
 
-async def group(repos: iter):
+async def group(repos: Iterable[Coroutine]):
     """Main function, but async.
     Chain pulls and status checks to each repo/bare repo, then run them.
     """

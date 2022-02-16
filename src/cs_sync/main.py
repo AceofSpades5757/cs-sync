@@ -4,6 +4,7 @@ import subprocess
 import sys
 import time
 from pathlib import Path
+from typing import Union
 
 import typer
 import yaml
@@ -23,7 +24,7 @@ cli = typer.Typer()
 config_file = Path.home() / '.cssync'
 
 
-def load_config() -> [list, list]:
+def load_config() -> tuple[list, list]:
     """Get configuration from config file.
 
     Returns repo_paths and bare_repo_dicts.
@@ -34,10 +35,11 @@ def load_config() -> [list, list]:
         repo_paths = flatten_list(
             [expand_path(i) for i in config.get('repo_paths', [])]
         )
-        bare_repo_dicts = config.get('bare_repos', [])
-        for i in bare_repo_dicts:
-            i['git_dir'] = expand_path(i['git_dir'])[0]
-            i['work_tree'] = expand_path(i['work_tree'])[0]
+        bare_repo_dicts: list[dict] = config.get('bare_repos', [])
+        bare_repo: dict[str, str]
+        for bare_repo in bare_repo_dicts:
+            bare_repo['git_dir'] = expand_path(bare_repo['git_dir'])[0]
+            bare_repo['work_tree'] = expand_path(bare_repo['work_tree'])[0]
     else:
         repo_paths = []
         bare_repo_dicts = []

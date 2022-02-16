@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 from glob import glob
 from pathlib import Path
+from typing import Union
 
 
-def expand_path(path: str or Path) -> Path:
-    path = glob(str(Path(path).expanduser()))
-    return path
+def expand_path(path: Union[str, Path]) -> list[str]:
+    paths: list[str] = glob(str(Path(path).expanduser()))
+    return paths
 
 
-def flatten_list(nested_list: list or tuple) -> list:
+def flatten_list(nested_list: Union[list, tuple]) -> list:
 
     supported_types = (list, tuple)
 
