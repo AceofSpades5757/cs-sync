@@ -35,4 +35,4 @@ repos:
     additional_dependencies: ["tox"]
     language: python
     pass_filenames: false
-    stages: [commit]
+    stages: [manual]
