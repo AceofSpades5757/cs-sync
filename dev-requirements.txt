@@ -5,3 +5,4 @@ setuptools
 
 # 3rd Party
 tox
+pre-commit
