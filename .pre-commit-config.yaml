@@ -29,13 +29,11 @@ repos:
 # Unit Testing
 - repo: local
   hooks:
-  - id: unittest
-    name: unittest
-    entry: python -m unittest discover
-    additional_dependencies: ["."]
-    args: [
-      "--start-directory", "tests",
-    ]
+  - id: tox
+    name: tox
+    entry: tox
+    additional_dependencies: ["tox"]
+    args: []
     language: python
     'types': [python]
     pass_filenames: false
