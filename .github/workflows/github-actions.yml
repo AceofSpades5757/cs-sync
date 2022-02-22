@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Install Dependencies
-      working-directory: .
+      working-directory: ./tests
       run: |
         python -m pip install --upgrade pip
         python -m pip install \
@@ -15,4 +15,4 @@ jobs:
           pyyaml
     - name: Run Tests
       run: |
-        python -m unittest discover --start-directory tests
+        python -m unittest discover
