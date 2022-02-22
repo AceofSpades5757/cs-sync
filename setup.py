@@ -26,6 +26,7 @@ setuptools.setup(
         '': 'src',
         'cs_sync': 'src/cs_sync',
     },
+    test_suite='tests',
     classifiers=[
         'Programming Language :: Python :: 3',
         'Operating System :: OS Independent',
