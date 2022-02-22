@@ -14,7 +14,7 @@ class TestStringMethods(unittest.TestCase):
         # Documented method of testing Typer applications.
         result = self.runner.invoke(cli, ["--help"])
         exit_code: int = result.exit_code
-        self.assertEquals(0, exit_code)
+        self.assertEqual(0, exit_code)
 
         # Test that the CLI can be called
         # Unable to resolve using CI/CD tools at this time
