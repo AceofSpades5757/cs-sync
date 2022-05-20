@@ -1,8 +1,13 @@
 # Local Installation
 -e .
+
+# Build Tools
 wheel
 setuptools
 
-# 3rd Party
-tox
+# CI/CD Tools
 pre-commit
+
+# Test Tools
+tox
+tox-gh-actions

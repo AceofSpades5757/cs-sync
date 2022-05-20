@@ -1,5 +1,5 @@
 # Project
-PROJECT_NAME = "cs-sync"
+PROJECT_NAME = cs-sync
 
 # Environment
 VENV_DIR = .venv
@@ -36,11 +36,8 @@ venv:
 	${VENV_PIP} install -r dev-requirements.txt
 
 test:
-	${VENV_PYTHON} -m unittest \
-		discover \
-		--start-directory tests \
-		--pattern *_test.py \
-		--verbose
+	@echo "Testing $(PROJECT_NAME)."
+	$(VENV_BIN)/tox
 
 clean:
 	@echo "Removing temporary files, caches, and build files."
