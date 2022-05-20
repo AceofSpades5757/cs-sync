@@ -2,8 +2,8 @@
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/cs-sync?label=Python%20Version&logo=python&logoColor=yellow)
 ![PyPI - License](https://img.shields.io/pypi/l/cs-sync?color=green)
 ![PyPI](https://img.shields.io/pypi/v/cs-sync?color=darkred)
-<!--![PyPI - Status](https://img.shields.io/pypi/status/cs-sync)-->
-[![Coverage](https://github.com/AceofSpades5757/cs-sync/actions/workflows/github-actions.yml/badge.svg)](https://github.com/AceofSpades5757/cs-sync/actions/workflows/github-actions.yml)
+
+[![Coverage](https://github.com/AceofSpades5757/cs-sync/actions/workflows/tests.yml/badge.svg)](https://github.com/AceofSpades5757/cs-sync/actions/workflows/tests.yml)
 
 # Descriptions
 
