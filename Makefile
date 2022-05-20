@@ -1,5 +1,5 @@
 # Project
-PROJECT_NAME := $(shell basename $(CURDIR))
+PROJECT_NAME = "cs-sync"
 
 # Environment
 VENV_DIR = .venv
