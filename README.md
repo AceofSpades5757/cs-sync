@@ -3,7 +3,8 @@
 ![PyPI - License](https://img.shields.io/pypi/l/cs-sync?color=green)
 ![PyPI](https://img.shields.io/pypi/v/cs-sync?color=darkred)
 
-[![Coverage](https://github.com/AceofSpades5757/cs-sync/actions/workflows/tests.yml/badge.svg)](https://github.com/AceofSpades5757/cs-sync/actions/workflows/tests.yml)
+[![Test](https://github.com/AceofSpades5757/cs-sync/actions/workflows/tests.yml/badge.svg)](https://github.com/AceofSpades5757/cs-sync/actions/workflows/tests.yml)
+![Codecov](https://img.shields.io/codecov/c/github/AceofSpades5757/cs-sync?label=Coverage)
 
 # Descriptions
 
