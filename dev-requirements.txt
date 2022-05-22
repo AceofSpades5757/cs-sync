@@ -13,4 +13,5 @@ tox
 tox-gh-actions
 
 # Code Coverage
+pytest
 pytest-cov
