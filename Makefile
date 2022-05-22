@@ -16,7 +16,7 @@ VENV_PIP = ${VENV_BIN}/pip
 
 # Makefile Settings
 .DEFAULT_GOAL = help
-.PHONY: build publish test venv clean
+.PHONY: build publish test venv clean coverage
 
 help:
 	@echo Manage $(PROJECT_NAME). Usage:
@@ -26,6 +26,7 @@ help:
 	@echo make clean - Remove caches, temp files, build files, etc.
 	@echo make build - Build wheels.
 	@echo make publish - Publish to PyPi.
+	@echo make coverage - Check code coverage.
 
 venv:
 	-${PYTHON} -m pip install --upgrade pip
@@ -38,6 +39,10 @@ venv:
 test:
 	@echo "Testing $(PROJECT_NAME)."
 	$(VENV_BIN)/tox
+
+coverage:
+	@echo "Checking Code Coverage."
+	${VENV_BIN}/pytest --cov="cs_sync" tests
 
 clean:
 	@echo "Removing temporary files, caches, and build files."

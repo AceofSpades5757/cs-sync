@@ -11,3 +11,6 @@ pre-commit
 # Test Tools
 tox
 tox-gh-actions
+
+# Code Coverage
+pytest-cov
