@@ -4,7 +4,7 @@
 ![PyPI](https://img.shields.io/pypi/v/cs-sync?color=darkred)
 
 [![Test](https://github.com/AceofSpades5757/cs-sync/actions/workflows/tests.yml/badge.svg)](https://github.com/AceofSpades5757/cs-sync/actions/workflows/tests.yml)
-![Code Coverage](https://img.shields.io/codecov/c/github/AceofSpades5757/cs-sync)
+![Codecov](https://img.shields.io/codecov/c/github/AceofSpades5757/cs-sync?label=Coverage)
 
 # Descriptions
 
