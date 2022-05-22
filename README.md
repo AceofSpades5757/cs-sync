@@ -17,9 +17,9 @@ PyPi - The Python Package Index
 
 ## Current Support
 
-* Git
-  * **Works with bare repos**
-* Taskwarrior
+- Git
+  - **Works with bare repos**
+- Taskwarrior
 
 # Usage
 
