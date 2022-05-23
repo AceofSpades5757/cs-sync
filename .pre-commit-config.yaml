@@ -32,6 +32,7 @@ repos:
       - id: mypy
         name: Python Type Checking
         additional_dependencies: [types-pyyaml]
+        exclude: "docs/.*"
   # Unit Testing
   - repo: local
     hooks:
