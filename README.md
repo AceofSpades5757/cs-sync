@@ -6,6 +6,8 @@
 [![Test](https://github.com/AceofSpades5757/cs-sync/actions/workflows/tests.yml/badge.svg)](https://github.com/AceofSpades5757/cs-sync/actions/workflows/tests.yml)
 ![Codecov](https://img.shields.io/codecov/c/github/AceofSpades5757/cs-sync?label=Coverage)
 
+[![Read the Docs](https://img.shields.io/readthedocs/cs-sync)](https://cs-sync.readthedocs.io/en/latest/)
+
 # Descriptions
 
 A custom syncing tool. Originally used to simply tasks such as checking on my local Git repositories and syncing to my Taskwarrior server. May someday add S3 support.
