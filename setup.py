@@ -10,12 +10,14 @@ with open('LICENSE', 'r') as fin:
 
 setuptools.setup(
     name='cs-sync',
-    version='0.1.5',
+    version='0.1.6',
     license='MIT',
     author='Kyle L. Davis',
     author_email='AceofSpades5757.github@gmail.com',
     install_requires=[
         'typer',
+        'PyYAML',
+        'blessed',
     ],
     long_description=long_description,
     long_description_content_type='text/markdown',
