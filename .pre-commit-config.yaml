@@ -1,7 +1,7 @@
 repos:
   # Check YAML; Fix end of files; Fix trailing whitespace
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.3.0
+    rev: v4.5.0
     hooks:
       - id: check-yaml
         name: Check YAML
@@ -11,13 +11,13 @@ repos:
         name: Fix Trailing Whitespace
   # Python - Reorder Imports
   - repo: https://github.com/asottile/reorder_python_imports
-    rev: v3.8.5
+    rev: v3.12.0
     hooks:
       - id: reorder-python-imports
         name: Python Reorder Imports
   # Python - Code Formatting
   - repo: https://github.com/psf/black
-    rev: 22.10.0
+    rev: 23.10.1
     hooks:
       - id: black
         name: Python Formatter
@@ -27,7 +27,7 @@ repos:
           - --skip-string-normalization
   # Python - Type Checking
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v0.982
+    rev: v1.6.1
     hooks:
       - id: mypy
         name: Python Type Checking
@@ -45,7 +45,7 @@ repos:
         stages: [manual]
   # Formatter (General - JavaScript (including experimental features), JSX, Angular, Vue, Flow, TypeScript, CSS, Less, and SCSS, HTML, Ember/Handlebars, JSON, GraphQL, Markdown, including GFM and MDX, YAML, other (using plugins, API, etc. to add other languages))
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v3.0.0-alpha.3
+    rev: v3.0.3
     hooks:
       - id: prettier
         name: General Formatter
