@@ -23,7 +23,7 @@ cli = typer.Typer()
 
 
 # Config
-config_file = Path.home() / '.cssync'
+config_file = Path.home() / ".cssync"
 
 
 def load_config() -> Tuple[List, List]:
@@ -35,13 +35,13 @@ def load_config() -> Tuple[List, List]:
         with open(config_file, "r") as ymlfile:
             config = yaml.load(ymlfile, Loader=yaml.Loader)
         repo_paths = flatten_list(
-            [expand_path(i) for i in config.get('repo_paths', [])]
+            [expand_path(i) for i in config.get("repo_paths", [])]
         )
-        bare_repo_dicts: List[Dict] = config.get('bare_repos', [])
+        bare_repo_dicts: List[Dict] = config.get("bare_repos", [])
         bare_repo: Dict[str, str]
         for bare_repo in bare_repo_dicts:
-            bare_repo['git_dir'] = expand_path(bare_repo['git_dir'])[0]
-            bare_repo['work_tree'] = expand_path(bare_repo['work_tree'])[0]
+            bare_repo["git_dir"] = expand_path(bare_repo["git_dir"])[0]
+            bare_repo["work_tree"] = expand_path(bare_repo["work_tree"])[0]
     else:
         repo_paths = []
         bare_repo_dicts = []
@@ -50,7 +50,6 @@ def load_config() -> Tuple[List, List]:
 
 def measure_time_async(original_async_function):
     async def wrapper(*args, **kwargs):
-
         # Work Before
         start = time.perf_counter()
 
@@ -69,15 +68,14 @@ def measure_time_async(original_async_function):
 
 def measure_time(original_async_function):
     def wrapper(*args, **kwargs):
-
         # Work Before
-        start = __import__('time').perf_counter()
+        start = __import__("time").perf_counter()
 
         # Run Async Function
         results = original_async_function(*args, **kwargs)
 
         # Work After
-        elapsed = __import__('time').perf_counter() - start
+        elapsed = __import__("time").perf_counter() - start
         print(term.red(f"Executed in {elapsed:0.2f} seconds."))
 
         # Return results
@@ -108,13 +106,13 @@ def git(short: bool = typer.Option(False, "--short")):
     repo_paths = [
         i
         for i in repo_paths
-        if Path(i).is_dir() and '.git' in [j.name for j in Path(i).glob('*')]
+        if Path(i).is_dir() and ".git" in [j.name for j in Path(i).glob("*")]
     ]
 
     repos = repo_paths + bare_repo_dicts
     chains = [chain_handler(chain(r), parse_repo, short) for r in repos]
     tasks = group(chains)
-    if sys.version > '3.6':
+    if sys.version > "3.6":
         _ = asyncio.run(tasks)
     else:
         loop = asyncio.get_event_loop()
@@ -125,11 +123,11 @@ def git(short: bool = typer.Option(False, "--short")):
 def task():
     """Sync Taskwarrior with Taskserver."""
 
-    command = ['task', 'sync']
-    if sys.platform == 'win32':
-        command = ['wsl'] + command
+    command = ["task", "sync"]
+    if sys.platform == "win32":
+        command = ["wsl"] + command
     subprocess.run(command)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     cli()

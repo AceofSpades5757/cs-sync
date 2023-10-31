@@ -8,45 +8,44 @@ from blessed import Terminal
 term = Terminal()
 
 
-def repo_output_handler(repo, tabs=1, indent='\t'):
-
+def repo_output_handler(repo, tabs=1, indent="\t"):
     results = []
-    repo_condition = 'green'
+    repo_condition = "green"
     for i in repo.modified:
-        results.append(term.yellow(f'{tabs*indent}modified: {i.path}'))
-        repo_condition = 'yellow'
+        results.append(term.yellow(f"{tabs*indent}modified: {i.path}"))
+        repo_condition = "yellow"
     for i in repo.renamed:
         results.append(
-            term.yellow(f'{tabs*indent}renamed: {i.path} {i.original_path}')
+            term.yellow(f"{tabs*indent}renamed: {i.path} {i.original_path}")
         )
-        repo_condition = 'yellow'
+        repo_condition = "yellow"
     for i in repo.untracked:
-        results.append(term.yellow(f'{tabs*indent}untracked: {i.path}'))
-        repo_condition = 'yellow'
+        results.append(term.yellow(f"{tabs*indent}untracked: {i.path}"))
+        repo_condition = "yellow"
     for i in repo.deleted:
-        results.append(term.red(f'{tabs*indent}deleted: {i.path}'))
-        repo_condition = 'red'
+        results.append(term.red(f"{tabs*indent}deleted: {i.path}"))
+        repo_condition = "red"
     for i in repo.ignored:
-        results.append(term.red(f'{tabs*indent}ignored: {i.path}'))
+        results.append(term.red(f"{tabs*indent}ignored: {i.path}"))
 
     if not repo.online:
-        repo_condition = 'blue'
+        repo_condition = "blue"
 
     try:
         header = [(tabs - 1) * indent, repo.name]
         if repo.branch.head:
             header.append(term.magenta(repo.branch.head))
         if repo.ahead:
-            header.append(term.cyan(f'↑{repo.ahead}'))
+            header.append(term.cyan(f"↑{repo.ahead}"))
         if repo.behind:
-            header.append(term.cyan(f'↓{repo.ahead}'))
+            header.append(term.cyan(f"↓{repo.ahead}"))
         if repo.modified:
-            header.append(term.cyan(f'~{len(repo.modified)}'))
+            header.append(term.cyan(f"~{len(repo.modified)}"))
         if repo.deleted:
-            header.append(term.cyan(f'-{len(repo.deleted)}'))
+            header.append(term.cyan(f"-{len(repo.deleted)}"))
         if repo.untracked:
-            header.append(term.cyan(f'…{len(repo.untracked)}'))
-        header = ' '.join(header)
+            header.append(term.cyan(f"…{len(repo.untracked)}"))
+        header = " ".join(header)
     except Exception:  # For Bare Repos
         header = f"{(tabs-1)*indent} {repo.name} {len(repo.modified):+}"
 
@@ -65,16 +64,16 @@ def repo_output_handler(repo, tabs=1, indent='\t'):
         ),
         "default": lambda iterable, item: iterable.insert(0, f"? {header}"),
     }
-    add_header = conditions.get(repo_condition, conditions['default'])
+    add_header = conditions.get(repo_condition, conditions["default"])
     add_header(results, header)
 
-    return '\n'.join(results)
+    return "\n".join(results)
 
 
 async def parse_repo(parsed_output: dict, short: bool = False):
-    status_stdout = parsed_output['status']['stdout']
+    status_stdout = parsed_output["status"]["stdout"]
     parsed = parse_git_status(status_stdout)
-    parsed.name = parsed_output['name']
+    parsed.name = parsed_output["name"]
 
     if short:
         # To tell if there's any changes that were made.
@@ -97,44 +96,43 @@ async def parse_repo(parsed_output: dict, short: bool = False):
 
 
 def parse_git_status(stdout):
-
     lines = stdout.splitlines()
     repo = SimpleNamespace()
 
-    branch_info = [i for i in lines if i.startswith('#')]
-    modified = [i for i in lines if i.startswith('1')]
-    renamed_or_copied = [i for i in lines if i.startswith('2')]
-    untracked = [i for i in lines if i.startswith('?')]
-    ignored = [i for i in lines if i.startswith('!')]
+    branch_info = [i for i in lines if i.startswith("#")]
+    modified = [i for i in lines if i.startswith("1")]
+    renamed_or_copied = [i for i in lines if i.startswith("2")]
+    untracked = [i for i in lines if i.startswith("?")]
+    ignored = [i for i in lines if i.startswith("!")]
 
     # Branch
-    oid_group = '# branch.oid (?P<oid>.*)'
-    head_group = '# branch.head (?P<head>.*)'
-    upstream_group = '# branch.upstream (?P<upstream>.*)'
-    ahead_behind_group = '# branch.ab (?P<ahead>.*) (?P<behind>.*)'
-    space = r'\s*'
+    oid_group = "# branch.oid (?P<oid>.*)"
+    head_group = "# branch.head (?P<head>.*)"
+    upstream_group = "# branch.upstream (?P<upstream>.*)"
+    ahead_behind_group = "# branch.ab (?P<ahead>.*) (?P<behind>.*)"
+    space = r"\s*"
     branch_re = re.compile(
-        fr'({oid_group})?'
-        + fr'{space}'
-        + fr'({head_group})?'
-        + fr'{space}'
-        + fr'({upstream_group})?'
-        + fr'{space}'
-        + fr'({ahead_behind_group})?'
+        rf"({oid_group})?"
+        + rf"{space}"
+        + rf"({head_group})?"
+        + rf"{space}"
+        + rf"({upstream_group})?"
+        + rf"{space}"
+        + rf"({ahead_behind_group})?"
     )
 
-    branch_info = [i for i in lines if i.startswith('#')]
-    branch_match = branch_re.match('\n'.join(branch_info))
+    branch_info = [i for i in lines if i.startswith("#")]
+    branch_match = branch_re.match("\n".join(branch_info))
 
     branch = SimpleNamespace(
-        oid=branch_match.group('oid'),
-        head=branch_match.group('head'),
-        upstream=branch_match.group('upstream'),
+        oid=branch_match.group("oid"),
+        head=branch_match.group("head"),
+        upstream=branch_match.group("upstream"),
         ahead=int(
-            branch_match.group('ahead') if branch_match.group('ahead') else 0
+            branch_match.group("ahead") if branch_match.group("ahead") else 0
         ),
         behind=int(
-            branch_match.group('behind') if branch_match.group('behind') else 0
+            branch_match.group("behind") if branch_match.group("behind") else 0
         ),
     )
 
@@ -148,21 +146,21 @@ def parse_git_status(stdout):
 
     # Untracked
     untracked = [i.split(maxsplit=1)[1] for i in untracked]
-    untracked = [SimpleNamespace(path=i, type='Untracked') for i in untracked]
+    untracked = [SimpleNamespace(path=i, type="Untracked") for i in untracked]
 
     # Ignored
     # Only if `--ignored=matching` is included
     ignored = [i.split(maxsplit=1)[1] for i in ignored]
-    ignored = [SimpleNamespace(path=i, type='Ignored') for i in ignored]
+    ignored = [SimpleNamespace(path=i, type="Ignored") for i in ignored]
 
     # All Files
     all_files = modified + renamed_or_copied + untracked + ignored
     # Resort by Type
-    modified = [i for i in all_files if i.type[0] == 'M']
-    renamed = [i for i in all_files if i.type[0] == 'R']
-    deleted = [i for i in all_files if i.type[0] == 'D']
-    untracked = [i for i in all_files if i.type[0] == 'U']
-    ignored = [i for i in all_files if i.type[0] == 'I']
+    modified = [i for i in all_files if i.type[0] == "M"]
+    renamed = [i for i in all_files if i.type[0] == "R"]
+    deleted = [i for i in all_files if i.type[0] == "D"]
+    untracked = [i for i in all_files if i.type[0] == "U"]
+    ignored = [i for i in all_files if i.type[0] == "I"]
 
     repo.branch = branch
     repo.ahead = branch.ahead
@@ -184,14 +182,13 @@ def parse_git_status(stdout):
 
 
 def get_file_info(raw):
-
-    if raw[0] == '1':
-        type_ = 'changed'
+    if raw[0] == "1":
+        type_ = "changed"
     else:
-        type_ = 'renamed_or_copied'
+        type_ = "renamed_or_copied"
     raw = raw[1:]  # Get rid of the type as the docs don't refer to it.
 
-    if type_ == 'renamed_or_copied':
+    if type_ == "renamed_or_copied":
         path = raw[8]
         original_path = raw[9]
     else:
@@ -199,19 +196,19 @@ def get_file_info(raw):
         original_path = None
 
     staged = False
-    subtype = raw[0][-1] if raw[0][-1] != '.' else raw[0][0]
-    if raw[0][0] == '.':
+    subtype = raw[0][-1] if raw[0][-1] != "." else raw[0][0]
+    if raw[0][0] == ".":
         staged = False
         subtype = raw[0][-1]
-    elif raw[0][-1] == '.':
+    elif raw[0][-1] == ".":
         staged = True
         subtype = raw[0][0]
-    if subtype == 'D':
-        subtype = 'Deleted'
-    elif subtype == 'M':
-        subtype = 'Modified'
-    elif subtype == 'R':
-        subtype = 'Renamed'
+    if subtype == "D":
+        subtype = "Deleted"
+    elif subtype == "M":
+        subtype = "Modified"
+    elif subtype == "R":
+        subtype = "Renamed"
 
     file = SimpleNamespace(
         path=path,

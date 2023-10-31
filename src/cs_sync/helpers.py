@@ -11,7 +11,6 @@ def expand_path(path: Union[str, Path]) -> List[str]:
 
 
 def flatten_list(nested_list: Union[list, tuple]) -> list:
-
     supported_types = (list, tuple)
 
     results = []

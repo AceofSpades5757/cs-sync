@@ -10,7 +10,6 @@ class TestStringMethods(unittest.TestCase):
         self.runner = CliRunner()
 
     def test_call(self):
-
         # Documented method of testing Typer applications.
         result = self.runner.invoke(cli, ["--help"])
         exit_code: int = result.exit_code
@@ -22,5 +21,5 @@ class TestStringMethods(unittest.TestCase):
         # self.assertEqual(process.returncode, 0)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
