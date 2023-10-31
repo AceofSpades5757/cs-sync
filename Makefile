@@ -12,7 +12,7 @@ else
 endif
 
 VENV_PYTHON = $(VENV_BIN)/python
-VENV_PIP = $(VENV_BIN)/pip
+VENV_PIP = $(VENV_PYTHON) -m pip
 
 # Makefile Settings
 .DEFAULT_GOAL = help
