@@ -4,6 +4,7 @@ from types import SimpleNamespace
 
 from blessed import Terminal
 
+
 term = Terminal()
 
 
