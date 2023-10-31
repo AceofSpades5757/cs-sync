@@ -16,7 +16,7 @@ VENV_PIP = $(VENV_PYTHON) -m pip
 
 # Makefile Settings
 .DEFAULT_GOAL = help
-.PHONY: build publish test venv clean coverage
+.PHONY: build publish test venv _venv clean coverage format format-update
 
 help:
 	@echo Manage $(PROJECT_NAME). Usage:
@@ -27,6 +27,8 @@ help:
 	@echo make build - Build wheels.
 	@echo make publish - Publish to PyPi.
 	@echo make coverage - Check code coverage.
+	@echo make format - Format code.
+	@echo make format-update - Update formatting.
 
 venv:
 	@if [ ! -d "$(VENV_DIR)" ]; then $(MAKE) _venv; fi
@@ -73,3 +75,11 @@ publish: build
 	@echo "Deploying $(PROJECT_NAME) to PyPi."
 	$(VENV_PIP) install --upgrade twine
 	$(VENV_PYTHON) -m twine upload dist/*
+
+format: venv
+	@echo "Formatting $(PROJECT_NAME)."
+	$(VENV_BIN)/pre-commit run --all-files
+
+format-update: venv
+	@echo "Updating $(PROJECT_NAME) formatting."
+	$(VENV_BIN)/pre-commit autoupdate
