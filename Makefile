@@ -29,6 +29,9 @@ help:
 	@echo make coverage - Check code coverage.
 
 venv:
+	@if [ ! -d "$(VENV_DIR)" ]; then $(MAKE) _venv; fi
+
+_venv:
 	-$(PYTHON) -m pip install --upgrade pip
 	$(PYTHON) -m pip install --upgrade virtualenv
 	$(PYTHON) -m virtualenv .venv
