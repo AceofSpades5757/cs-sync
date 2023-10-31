@@ -24,7 +24,6 @@ repos:
         args:
           - --line-length
           - "79"
-          - --skip-string-normalization
   # Python - Type Checking
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.6.1
